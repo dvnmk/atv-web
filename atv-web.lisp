@@ -1,8 +1,25 @@
 (in-package :atv-web)
 
+(setf hunchentoot:*session* t)
+(setf hunchentoot:*session-max-time* (* 60 60))
+
+(defun require-auth ()
+  (unless (hunchentoot:session-value :auth)
+    (hunchentoot:redirect "/")
+    (hunchentoot:abort-request-handler)))
+
+(define-easy-handler (logout-handler :uri "/logout") ()
+  (setf (hunchentoot:session-value :auth) nil)
+  "logged out")
+
 (define-easy-handler (index :uri "/") ()
   (let ((pw (hunchentoot:parameter "mw")))
-    (if (and pw (string= pw (today-magic-word)))
+    ;; login attempt
+    (when (and pw (string= pw (today-magic-word)))
+      (setf (hunchentoot:session-value :auth) t))
+    ;; already authenticated
+    (if (hunchentoot:session-value :auth)
+
 "
 <!DOCTYPE html>
 <html>
@@ -239,57 +256,75 @@ function refreshStream() {
    (format nil "~a/~a" *atv-ir-host* cmd)))
 
 (define-easy-handler (atv-turn_on-handler :uri "/atv/turn_on") ()
+  (require-auth)
   (atv-command "turn_on"))
 (define-easy-handler (atv-off-handler :uri "/atv/turn_off") ()
+  (require-auth)
   (atv-command "turn_off"))
-
 (define-easy-handler (atv-down-handler :uri "/atv/down") ()
+  (require-auth)
   (atv-ir "down"))
 (define-easy-handler (atv-up-handler :uri "/atv/up") ()
+  (require-auth)
   (atv-ir "up"))
 (define-easy-handler (atv-left-handler :uri "/atv/left") ()
+  (require-auth)
   (atv-ir "left"))
 (define-easy-handler (atv-right-handler :uri "/atv/right") ()
+  (require-auth)
   (atv-ir "right"))
 (define-easy-handler (atv-select-handler :uri "/atv/select") ()
+  (require-auth)
   (atv-ir "select"))
 (define-easy-handler (atv-menu-handler :uri "/atv/menu") ()
+  (require-auth)
   (atv-ir "menu"))
 (define-easy-handler (atv-home-handler :uri "/atv/home") ()
+  (require-auth)
   (atv-ir "home"))
 
 (define-easy-handler (atv-control-handler :uri "/atv/home/hold") ()
+  (require-auth)
   (atv-ir "home/hold"))
 (define-easy-handler (atv-switch-handler :uri "/atv/home/2") ()
+  (require-auth)
   (atv-ir "home/2"))
 
 (define-easy-handler (atv-play-handler :uri "/atv/play") ()
+  (require-auth)
   (atv-ir "play"))
 (define-easy-handler (atv-pause-handler :uri "/atv/pause") ()
+  (require-auth)
   (atv-ir "pause"))
 (define-easy-handler (atv-stop-handler :uri "/atv/stop") ()
+  (require-auth)
   (atv-ir "stop"))
 (define-easy-handler (atv-rwd-hadler :uri "/atv/rwd") ()
+  (require-auth)
   (atv-ir "rwd"))
 (define-easy-handler (atv-fwd-handler :uri "/atv/fwd") ()
+  (require-auth)
   (atv-ir "fwd"))
 (define-easy-handler (atv-pre-handler :uri "/atv/pre") ()
+  (require-auth)
   (atv-ir "pre"))
 (define-easy-handler (atv-nxt-handler :uri "/atv/nxt") ()
+  (require-auth)
   (atv-ir "nxt"))
 (define-easy-handler (atv-beg-handler :uri "/atv/beg") ()
+  (require-auth)
   (atv-ir "beg"))
 (define-easy-handler (atv-end-handler :uri "/atv/end") ()
+  (require-auth)
   (atv-ir "end"))
 
-
 (define-easy-handler (atv-status :uri "/atv/status") ()
+  (require-auth)
   (handler-case
       (multiple-value-bind (body status headers)
           (dex:get (format nil "~A/status" *atv-ir-host*))
         (declare (ignore headers))
         (format nil "ATV IR: ~A (HTTP ~A)" body status))
-
     (error (e)
       (setf (hunchentoot:return-code*) 503)
       (format nil "ATV IR ERROR: ~A" e))))
@@ -311,26 +346,32 @@ function refreshStream() {
    :ignore-error-status t))
 
 (hunchentoot:define-easy-handler (madiamtx-start-handler :uri "/mediamtx/start") ()
+  (require-auth)
   (lenovo-systemctl "start" "mediamtx.service")
   "Mediamtx started")
 
 (hunchentoot:define-easy-handler (mediamtx-stop-handler :uri "/mediamtx/stop") ()
+  (require-auth)
   (lenovo-systemctl "stop" "mediamtx.service")
   "Mediamtx stopped")
 
 (define-easy-handler (mediamtx-status-handler :uri "/mediamtx/status") ()
+  (require-auth)
   (setf (hunchentoot:content-type*) "text/plain; charset=utf-8")
   (lenovo-systemctl "status" "mediamtx.service"))
 
 (hunchentoot:define-easy-handler (stream-on-handler :uri "/ffmpeg/start") ()
+  (require-auth)
   (lenovo-systemctl "start" "ffmpeg-x264.service")
   "FFmpeg-x264 started")
 
 (hunchentoot:define-easy-handler (stream-off-handler :uri "/ffmpeg/stop") ()
+  (require-auth)
   (lenovo-systemctl "stop" "ffmpeg-x264.service")
   "FFmpeg-x264 stopped")
 
 (define-easy-handler (ffmpeg-status-handler :uri "/ffmpeg/status") ()
+  (require-auth)
   (setf (hunchentoot:content-type*) "text/plain; charset=utf-8")
   (lenovo-systemctl "status" "ffmpeg-x264.service"))
 
@@ -351,8 +392,8 @@ function refreshStream() {
     (setf *server* nil)))
 
 (define-easy-handler (kill-switch :uri "/kill") ()
+  (require-auth)
   (setf (hunchentoot:content-type*) "text/plain; charset=utf-8")
-
   ;; Send the response first, then stop the server shortly after.
   (bt:make-thread
    (lambda ()
