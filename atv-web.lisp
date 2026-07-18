@@ -10,7 +10,11 @@
 
 (define-easy-handler (logout-handler :uri "/logout") ()
   (setf (hunchentoot:session-value :auth) nil)
-  "logged out")
+    (hunchentoot:redirect "/"))
+
+;; (define-easy-handler (logout-handler :uri "/logout") ()
+;;   (hunchentoot:remove-session)
+;;   (hunchentoot:redirect "/"))
 
 (define-easy-handler (index :uri "/") ()
   (let ((pw (hunchentoot:parameter "mw")))
@@ -141,6 +145,8 @@ fetch('/atv/status')
   .then(t => document.getElementById('status').textContent = t);
 \">ATV</button>
 
+<button class=\"nav-btn blank\" disabled>x</button>
+<button class=\"nav-btn status-btn\" onclick=\"refreshStream()\">RFR</button>
 <br>
 
 <button class=\"nav-btn\" onclick=\"fetch('/atv/left')\">\<</button>
@@ -157,7 +163,10 @@ fetch('/ffmpeg/status')
 \">FMP</button>
 
 <button class=\"nav-btn blank\" disabled>x</button>
-<button class=\"nav-btn status-btn\" onclick=\"refreshStream()\">RFR</button>
+<button class=\"text-btn stop-btn\" onclick=\"location.href='/logout'\">
+OUT
+</button>
+
 <br>
 
 <button class=\"ctr-btn nav-btn\" onclick=\"fetch('/atv/home/2')\">SWT</button>
@@ -179,10 +188,11 @@ fetch('/mediamtx/status')
 
 <button class=\"text-btn kill-btn\" onclick=\"
 if (confirm('Stop the Hunchentoot server?'))
-    fetch('/kill');
-\">
-KIL
-</button>
+    fetch('/kill');\">KIL</button>
+
+<button class=\"kill-btn text-btn\" onclick=\"
+if (confirm('Suspend the MediaMTX server?'))
+    fetch('/lenovo/suspend')\">SUS</button>
 
 <hr>
 <pre id=\"status\"></pre>
@@ -283,6 +293,10 @@ function refreshStream() {
   (require-auth)
   (atv-ir "home"))
 
+(define-easy-handler (atv-select-hold-handler :uri "/atv/select/hold") ()
+  (require-auth)
+  (atv-ir "select/hold"))
+
 (define-easy-handler (atv-control-handler :uri "/atv/home/hold") ()
   (require-auth)
   (atv-ir "home/hold"))
@@ -374,6 +388,15 @@ function refreshStream() {
   (require-auth)
   (setf (hunchentoot:content-type*) "text/plain; charset=utf-8")
   (lenovo-systemctl "status" "ffmpeg-x264.service"))
+
+(defun lenovo-suspend ()
+  (uiop:run-program
+   "ssh lenovo sudo systemctl suspend"))
+
+(define-easy-handler (lenovo-suspend-handler :uri "/lenovo/suspend") ()
+  (require-auth)
+  (lenovo-suspend)
+  "Lenovo suspend")
 
 ;;;; server
 (defparameter *web-port* 3931)
