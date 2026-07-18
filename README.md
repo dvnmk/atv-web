@@ -4,14 +4,17 @@ A self-hosted Apple TV web gateway built with Common Lisp, ESP32 IR control, and
 
 ## Overview
 
-`atv-web` is a Raspberry Pi based system that provides:
+`atv-web` is a home Apple TV gateway system that provides:
 
 * Web control of Apple TV through an ESP32 IR transmitter
-* Live Apple TV video streaming to a browser using MediaMTX
+* Live Apple TV video streaming through MediaMTX
 * A lightweight Common Lisp (Hunchentoot) web interface
-* Simple home-network remote access
+* Remote access from browsers on the local network
 
-The project combines hardware IR control and video streaming into a single web-based interface.
+The system separates control and video streaming:
+
+* Raspberry Pi handles web control and automation
+* Lenovo laptop handles HDMI capture and video streaming
 
 ## Architecture
 
@@ -22,45 +25,59 @@ Browser
    |
 Raspberry Pi
    |
-   ├── Hunchentoot
-   |      └── Web interface
+   └── Hunchentoot
+          |
+          └── ESP32 IR Remote
+                 |
+                 └── Apple TV control
+
+
+Apple TV
    |
-   ├── MediaMTX
-   |      └── Apple TV video stream
+   | HDMI
    |
-   └── ESP32 IR Remote
-          └── Apple TV control
+Lenovo Laptop
+   |
+   ├── USB HDMI Capture
+   |
+   ├── FFmpeg
+   |
+   └── MediaMTX
+          |
+          └── HLS Stream
+                 |
+                 └── Browser
 ```
 
 ## Features
 
 * Apple TV web remote control
-* IR-based power/menu/home navigation
-* Live video streaming in a browser
-* HLS streaming through MediaMTX
+* ESP32 IR transmitter
+* HDMI capture based Apple TV streaming
+* MediaMTX HLS streaming
 * Common Lisp backend
-* ESP32 Wi-Fi IR transmitter
+* Lightweight home-network deployment
 * Daily changing access protection
 
 ## Hardware
 
-### Server
+### Control Server
 
 * Raspberry Pi
 * SBCL Common Lisp
 * Hunchentoot
+
+### Streaming Server
+
+* Lenovo laptop
+* USB HDMI capture device
+* FFmpeg
 * MediaMTX
 
 ### Apple TV Control
 
 * ESP32
 * IR LED transmitter
-
-Example firmware:
-
-```
-atv-esp-remote/
-```
 
 ## Project Structure
 
@@ -76,11 +93,7 @@ atv-web/
 └── README.md
 ```
 
-## Streaming
-
-The video pipeline uses MediaMTX.
-
-Typical flow:
+## Streaming Pipeline
 
 ```
 Apple TV
@@ -91,58 +104,16 @@ FFmpeg
    |
 MediaMTX
    |
-HLS (.m3u8)
+HLS
    |
 Web Browser
-```
-
-## Setup
-
-### Configure ESP32 Wi-Fi
-
-Copy:
-
-```
-secrets.example.h
-```
-
-to:
-
-```
-secrets.h
-```
-
-and add your Wi-Fi credentials.
-
-`secrets.h` is intentionally excluded from Git.
-
-### Run the server
-
-Load the Common Lisp system:
-
-```lisp
-(asdf:load-system :atv-web)
-```
-
-Start the Hunchentoot server.
-
-## Magic Word
-
-The system includes a private daily access mechanism.
-
-The implementation is not included in the repository.
-
-A template is provided:
-
-```
-magic-word.example.lisp
 ```
 
 ## Security
 
 This project is designed for personal home use.
 
-It combines remote control and video streaming, so exposing it directly to the public internet is not recommended without additional authentication and HTTPS.
+The streaming and control interfaces should not be exposed directly to the public internet without proper authentication and HTTPS.
 
 ## License
 
