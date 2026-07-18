@@ -110,12 +110,13 @@ button:active {
 <button class=\"menu-btn nav-btn\" onclick=\"fetch('/atv/menu')\">MNU</button>
 <button class=\"nav-btn\" onclick=\"fetch('/atv/up')\">^</button>
 <button class=\"menu-btn nav-btn\" onclick=\"fetch('/atv/home')\">HME</button>
-<button class=\"ctr-btn nav-btn\" onclick=\"fetch('/atv/home/2')\">SWT</button>
 
-<button class=\"ctr-btn nav-btn\" onclick=\"fetch('/atv/home/hold')\">CTR</button>
-<!--
+<button class=\"nav-btn blank\" disabled>x</button>
+
+
+
 <button class=\"text-btn start-btn\" onclick=\"fetch('/atv/turn_on')\">STA</button> 
--->
+
 <button class=\"text-btn stop-btn\" onclick=\"fetch('/atv/turn_off')\">STP</Button>
 <button class=\"nav-btn\" onclick=\"
 fetch('/atv/status')
@@ -142,9 +143,10 @@ fetch('/ffmpeg/status')
 <button class=\"nav-btn status-btn\" onclick=\"refreshStream()\">RFR</button>
 <br>
 
-<button class=\"nav-btn blank\" disabled>x</button>
+<button class=\"ctr-btn nav-btn\" onclick=\"fetch('/atv/home/2')\">SWT</button>
 <button class=\"nav-btn\" onclick=\"fetch('/atv/down')\">v</button>
-<button class=\"nav-btn blank\" disabled>x</button>
+<button class=\"ctr-btn nav-btn\" onclick=\"fetch('/atv/home/hold')\">CTR</button>
+
 <button class=\"nav-btn blank\" disabled>x</button>
 
 <button class=\"text-btn start-btn\" onclick=\"fetch('/mediamtx/start')\">STA</button>
