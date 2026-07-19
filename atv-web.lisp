@@ -81,11 +81,14 @@ function refreshStream() {
 
 <button class=\"text-btn start-btn\" onclick=\"fetch('/atv/turn_on')\">STA</button> 
 <button class=\"text-btn stop-btn\" onclick=\"fetch('/atv/turn_off')\">STP</Button>
-<button class=\"nav-btn\" onclick=\"fetch('/atv/status')
+<button class=\"nav-btn\" onclick=\"fetch('/atv/power_state')
   .then(r => r.text())
   .then(t => document.getElementById('status').textContent = t);\">ATV</button>
-
+<button class=\"nav-btn\" onclick=\"fetch('/atv/status')
+  .then(r => r.text())
+  .then(t => document.getElementById('status').textContent = t);\">IRP</button>
 <button class=\"nav-btn blank\" disabled>x</button>
+
 <button class=\"nav-btn status-btn\" onclick=\"refreshStream()\">RFR</button>
 <br>
 
@@ -100,6 +103,7 @@ function refreshStream() {
   .then(r => r.text())
   .then(t => document.getElementById('status').textContent = t);\">FMP</button>
 
+<button class=\"nav-btn blank\" disabled>x</button>
 <button class=\"nav-btn blank\" disabled>x</button>
 <button class=\"text-btn stop-btn\" onclick=\"if (confirm('Logout?'))
     fetch('/logout');\">OUT</button>
@@ -119,7 +123,7 @@ function refreshStream() {
 
 
 <button class=\"blank nav-btn\" disabled>x</button>
-
+<button class=\"nav-btn blank\" disabled>x</button>
 <button class=\"text-btn kill-btn\" onclick=\"if (confirm('Stop the Hunchentoot server?'))
     fetch('/kill');\">KIL</button>
 
@@ -308,6 +312,9 @@ button:active {
   (dex:get
    (format nil "~a/~a" *atv-ir-host* cmd)))
 
+(define-easy-handler (atv-power_state-handler :uri "/atv/power_state") ()
+  (require-auth)
+  (atv-command "power_state"))
 (define-easy-handler (atv-turn_on-handler :uri "/atv/turn_on") ()
   (require-auth)
   (atv-command "turn_on"))
