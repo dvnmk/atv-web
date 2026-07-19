@@ -13,7 +13,7 @@ pprof: no
 paths:
   webcam:
       source: publisher
-#      maxReaders: 2
+      maxReaders: 2
 
 rtspAddress: 127.0.0.1:8554      
 hlsAddress: 192.168.0.22:8888
