@@ -1,5 +1,3 @@
-# ATV-WEB 
-
 # ATV-WEB
 
 A self-hosted web interface for controlling and viewing Apple TV, built with Common Lisp, ESP32-based IR control, and MediaMTX streaming.
