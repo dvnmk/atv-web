@@ -4,6 +4,9 @@ A self-hosted web interface for controlling and viewing Apple TV, built with Com
 
 ![ATV-Web](images/screenshot.png)
 
+## Why?
+* Why?
+
 ## Overview
 
 `atv-web` is a home Apple TV gateway system that provides:
