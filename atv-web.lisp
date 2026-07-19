@@ -10,40 +10,145 @@
 
 (define-easy-handler (logout-handler :uri "/logout") ()
   (setf (hunchentoot:session-value :auth) nil)
-    (hunchentoot:redirect "/"))
+  (hunchentoot:redirect "/"))
 
-;; (define-easy-handler (logout-handler :uri "/logout") ()
-;;   (hunchentoot:remove-session)
-;;   (hunchentoot:redirect "/"))
+(defun video-scripts-html ()
+"
+<script>
+const video = document.getElementById('video');
+const url = 'http://gnsk.iptime.org:8888/webcam/index.m3u8';
 
-(define-easy-handler (index :uri "/") ()
-  (let ((pw (hunchentoot:parameter "mw")))
-    ;; login attempt
-    (when (and pw (string= pw (today-magic-word)))
-      (setf (hunchentoot:session-value :auth) t))
-    ;; already authenticated
-    (if (hunchentoot:session-value :auth)
+let hls = null;
 
+function loadStream() {
+    if (Hls.isSupported()) {
+
+        if (hls) {
+            hls.destroy();
+        }
+
+        hls = new Hls();
+
+        hls.loadSource(url + '?t=' + Date.now());
+        hls.attachMedia(video);
+
+    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+
+        video.src = url + '?t=' + Date.now();
+        video.load();
+    }
+}
+
+function fullscreenVideo() {
+    const video = document.getElementById(\"video\");
+
+    if (video.requestFullscreen) {
+        video.requestFullscreen();
+    } else if (video.webkitRequestFullscreen) {
+        video.webkitRequestFullscreen(); // Safari
+    }
+}
+
+loadStream();
+
+function refreshStream() {
+    loadStream();
+}
+</script>
+")
+
+(defun control-buttons-html ()
+  "
+<div id='controls'>
+<button class=\"text-btn menu-btn\" onclick=\"document.getElementById('video').muted=false\">UMT</button>
+<button class=\"text-btn menu-btn\" onclick=\"fullscreenVideo()\">FLS</button>
+
+<button class=\"text-btn\" onclick=\"fetch('/atv/pre')\">|\<</button>
+<button class=\"text-btn\" onclick=\"fetch('/atv/rwd')\">\<\<</button>
+<button class=\"text-btn\" onclick=\"fetch('/atv/play')\">\>||</button>
+<button class=\"text-btn\" onclick=\"fetch('/atv/stop')\">[]</button>
+<button class=\"text-btn\" onclick=\"fetch('/atv/fwd')\">\>\></button>
+<button class=\"text-btn\" onclick=\"fetch('/atv/nxt')\">\>|</button>
+<button class=\"text-btn\" onclick=\"fetch('/atv/beg')\">-10S</button>
+<button class=\"text-btn\" onclick=\"fetch('/atv/end')\">+10S</button>
+
+<br>
+<button class=\"menu-btn nav-btn\" onclick=\"fetch('/atv/menu')\">MNU</button>
+<button class=\"nav-btn\" onclick=\"fetch('/atv/up')\">^</button>
+<button class=\"menu-btn nav-btn\" onclick=\"fetch('/atv/home')\">HME</button>
+
+<button class=\"nav-btn blank\" disabled>x</button>
+
+<button class=\"text-btn start-btn\" onclick=\"fetch('/atv/turn_on')\">STA</button> 
+<button class=\"text-btn stop-btn\" onclick=\"fetch('/atv/turn_off')\">STP</Button>
+<button class=\"nav-btn\" onclick=\"fetch('/atv/status')
+  .then(r => r.text())
+  .then(t => document.getElementById('status').textContent = t);\">ATV</button>
+
+<button class=\"nav-btn blank\" disabled>x</button>
+<button class=\"nav-btn status-btn\" onclick=\"refreshStream()\">RFR</button>
+<br>
+
+<button class=\"nav-btn\" onclick=\"fetch('/atv/left')\">\<</button>
+<button class=\"nav-btn\" onclick=\"fetch('/atv/select')\">S</button>
+<button class=\"nav-btn\" onclick=\"fetch('/atv/right')\">\></button>
+<button class=\"nav-btn blank\" disabled>x</button>
+
+<button class=\"text-btn start-btn\" onclick=\"fetch('/ffmpeg/start')\">STA</button>
+<button class=\"text-btn stop-btn\" onclick=\"fetch('/ffmpeg/stop')\">STP</button>
+<button class=\"text-btn\"  onclick=\"fetch('/ffmpeg/status')
+  .then(r => r.text())
+  .then(t => document.getElementById('status').textContent = t);\">FMP</button>
+
+<button class=\"nav-btn blank\" disabled>x</button>
+<button class=\"text-btn stop-btn\" onclick=\"if (confirm('Logout?'))
+    fetch('/logout');\">OUT</button>
+<br>
+
+<button class=\"ctr-btn nav-btn\" onclick=\"fetch('/atv/home/2')\">SWT</button>
+<button class=\"nav-btn\" onclick=\"fetch('/atv/down')\">v</button>
+<button class=\"ctr-btn nav-btn\" onclick=\"fetch('/atv/home/hold')\">CTR</button>
+
+<button class=\"nav-btn blank\" disabled>x</button>
+
+<button class=\"text-btn start-btn\" onclick=\"fetch('/mediamtx/start')\">STA</button>
+<button class=\"text-btn stop-btn\" onclick=\"fetch('/mediamtx/stop')\">STP</button>
+<button class=\"text-btn\" onclick=\"fetch('/mediamtx/status')
+  .then(r => r.text())
+  .then(t => document.getElementById('status').textContent = t);\">MTX</button>
+
+
+<button class=\"blank nav-btn\" disabled>x</button>
+
+<button class=\"text-btn kill-btn\" onclick=\"if (confirm('Stop the Hunchentoot server?'))
+    fetch('/kill');\">KIL</button>
+
+<hr>
+<pre id=\"status\"></pre>
+<hr>
+</div>
+"
+)
+
+(defun login-html ()
 "
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset='utf-8'>
 <title>ATV-WEB</title>
-<script src='https://cdn.jsdelivr.net/npm/hls.js'></script>
 </head>
 
 <body>
+<form>
+<input type='password' name='mw'>
+<input type='submit' value='Enter'>
+</form>
+</body>
+")
 
-<video id='video'
-       controls
-       autoplay
-       muted
-       playsinline
-       style='width:98vw; max-height:75vh'>
-</video>
-<br>
-
+(defun style-html ()
+  "
 <style>
 button {
     width: 50px;
@@ -109,141 +214,92 @@ button:active {
     transform: scale(0.9);
 }
 </style>
-
-<button class=\"text-btn menu-btn\" onclick=\"document.getElementById('video').muted=false\">UMT</button>
-<button class=\"text-btn menu-btn\" onclick=\"fullscreenVideo()\">FLS</button>
-<button class=\"text-btn\" onclick=\"fetch('/atv/pre')\">|\<</button>
-<button class=\"text-btn\" onclick=\"fetch('/atv/rwd')\">\<\<</button>
-<button class=\"text-btn\" onclick=\"fetch('/atv/play')\">\>||</button>
-<button class=\"text-btn\" onclick=\"fetch('/atv/stop')\">[]</button>
-<button class=\"text-btn\" onclick=\"fetch('/atv/fwd')\">\>\></button>
-<button class=\"text-btn\" onclick=\"fetch('/atv/nxt')\">\>|</button>
-<button class=\"text-btn\" onclick=\"fetch('/atv/beg')\">-10S</button>
-<button class=\"text-btn\" onclick=\"fetch('/atv/end')\">+10S</button>
-
-<br>
-<button class=\"menu-btn nav-btn\" onclick=\"fetch('/atv/menu')\">MNU</button>
-<button class=\"nav-btn\" onclick=\"fetch('/atv/up')\">^</button>
-<button class=\"menu-btn nav-btn\" onclick=\"fetch('/atv/home')\">HME</button>
-
-<button class=\"nav-btn blank\" disabled>x</button>
-
-<button class=\"text-btn start-btn\" onclick=\"fetch('/atv/turn_on')\">STA</button> 
-<button class=\"text-btn stop-btn\" onclick=\"fetch('/atv/turn_off')\">STP</Button>
-<button class=\"nav-btn\" onclick=\"fetch('/atv/status')
-  .then(r => r.text())
-  .then(t => document.getElementById('status').textContent = t);\">ATV</button>
-
-<button class=\"nav-btn blank\" disabled>x</button>
-<button class=\"nav-btn status-btn\" onclick=\"refreshStream()\">RFR</button>
-<br>
-
-<button class=\"nav-btn\" onclick=\"fetch('/atv/left')\">\<</button>
-<button class=\"nav-btn\" onclick=\"fetch('/atv/select')\">S</button>
-<button class=\"nav-btn\" onclick=\"fetch('/atv/right')\">\></button>
-<button class=\"nav-btn blank\" disabled>x</button>
-
-<button class=\"text-btn start-btn\" onclick=\"fetch('/ffmpeg/start')\">STA</button>
-<button class=\"text-btn stop-btn\" onclick=\"fetch('/ffmpeg/stop')\">STP</button>
-<button class=\"text-btn\"  onclick=\"fetch('/ffmpeg/status')
-  .then(r => r.text())
-  .then(t => document.getElementById('status').textContent = t);\">FMP</button>
-
-<button class=\"nav-btn blank\" disabled>x</button>
-<button class=\"text-btn stop-btn\" onclick=\"location.href='/logout'\">OUT</button>
-<br>
-
-<button class=\"ctr-btn nav-btn\" onclick=\"fetch('/atv/home/2')\">SWT</button>
-<button class=\"nav-btn\" onclick=\"fetch('/atv/down')\">v</button>
-<button class=\"ctr-btn nav-btn\" onclick=\"fetch('/atv/home/hold')\">CTR</button>
-
-<button class=\"nav-btn blank\" disabled>x</button>
-
-<button class=\"text-btn start-btn\" onclick=\"fetch('/mediamtx/start')\">STA</button>
-<button class=\"text-btn stop-btn\" onclick=\"fetch('/mediamtx/stop')\">STP</button>
-<button class=\"text-btn\" onclick=\"fetch('/mediamtx/status')
-  .then(r => r.text())
-  .then(t => document.getElementById('status').textContent = t);\">MTX</button>
-
-
-<button class=\"blank nav-btn\" disabled>x</button>
-
-<button class=\"text-btn kill-btn\" onclick=\"if (confirm('Stop the Hunchentoot server?'))
-    fetch('/kill');\">KIL</button>
-
-<hr>
-<pre id=\"status\"></pre>
-<hr>
-
-<script>
-const video = document.getElementById('video');
-const url = 'http://gnsk.iptime.org:8888/webcam/index.m3u8';
-
-let hls = null;
-
-function loadStream() {
-    if (Hls.isSupported()) {
-
-        if (hls) {
-            hls.destroy();
-        }
-
-        hls = new Hls();
-
-        hls.loadSource(url + '?t=' + Date.now());
-        hls.attachMedia(video);
-
-    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-
-        video.src = url + '?t=' + Date.now();
-        video.load();
-    }
-}
-
-function fullscreenVideo() {
-    const video = document.getElementById(\"video\");
-
-    if (video.requestFullscreen) {
-        video.requestFullscreen();
-    } else if (video.webkitRequestFullscreen) {
-        video.webkitRequestFullscreen(); // Safari
-    }
-}
-
-loadStream();
-
-function refreshStream() {
-    loadStream();
-}
-</script>
-
-</body>
-</html>
 "
+  )
 
+(defun video-html ()
+  "
+<div id='video-area'>
+<video id='video'
+       controls
+       autoplay
+       muted
+       playsinline
+       style='width:98vw; max-height:75vh'>
+</video>
+</div>
 "
+  )
+
+
+(define-easy-handler (index :uri "/") ()
+  (let ((pw (hunchentoot:parameter "mw")))
+    ;; login attempt
+    (when (and pw (string= pw (today-magic-word)))
+      (setf (hunchentoot:session-value :auth) t))
+    ;; already authenticated
+    (if (hunchentoot:session-value :auth)
+	(format nil
+		"
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset='utf-8'>
 <title>ATV-WEB</title>
+<script src='https://cdn.jsdelivr.net/npm/hls.js'></script>
+~A
 </head>
-
 <body>
-<form>
-<input type='password' name='mw'>
-<input type='submit' value='Enter'>
-</form>
+~A
+~A 
+~A
 </body>
+</html>
 "
-)))
+		(style-html)
+		(video-html)
+		(control-buttons-html)
+		(video-scripts-html))
+	(login-html))))
+
+(define-easy-handler (remote :uri "/remote") ()
+  (let ((pw (hunchentoot:parameter "mw")))
+    ;; login attempt
+    (when (and pw (string= pw (today-magic-word)))
+      (setf (hunchentoot:session-value :auth) t))
+    ;; already authenticated
+    (if (hunchentoot:session-value :auth)
+	(format nil
+		"
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset='utf-8'>
+<title>ATV-WEB BTN</title>
+<script src='https://cdn.jsdelivr.net/npm/hls.js'></script>
+~A
+</head>
+<body>
+~A
+~A
+</body>
+</html>
+"
+		(style-html)
+		(control-buttons-html)
+		(video-scripts-html))
+	(login-html))))
+
+
+
+
+(defparameter *atv-id* "56:DE:61:E6:C5:17")
 
 (defun atv-command (cmd)
   (uiop:run-program
    (list "atvremote"
-	 "--id"
-	 "56:DE:61:E6:C5:17"
-	 cmd)
+         "--id" *atv-id*
+         cmd)
    :output :string))
 
 (defparameter *atv-ir-host* "http://192.168.0.128")
