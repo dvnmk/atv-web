@@ -1,0 +1,34 @@
+rtsp: yes
+hls: yes
+
+rtmp: no
+#rtmps: no
+webrtc: no
+srt: no
+
+api: no
+metrics: no
+pprof: no
+
+paths:
+  webcam:
+      source: publisher
+#      maxReaders: 2
+
+rtspAddress: 127.0.0.1:8554      
+hlsAddress: 192.168.0.22:8888
+
+#hlsSegmentDuration: 1s
+#hlsSegmentCount: 3
+
+## ffmpeg
+##   |
+##   | RTSP (only inside Lenovo)
+##   | 127.0.0.1:8554
+##   v
+## MediaMTX
+##   |
+##   | HLS (LAN access)
+##   | 192.168.0.22:8888
+##   v
+## iPhone / Tesla / Browser
