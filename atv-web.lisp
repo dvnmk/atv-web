@@ -235,7 +235,6 @@ button:active {
 "
   )
 
-
 (define-easy-handler (index :uri "/") ()
   (let ((pw (hunchentoot:parameter "mw")))
     ;; login attempt
@@ -293,9 +292,6 @@ button:active {
 		(control-buttons-html)
 		(video-scripts-html))
 	(login-html))))
-
-
-
 
 (defparameter *atv-id* "56:DE:61:E6:C5:17")
 
