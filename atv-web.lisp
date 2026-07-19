@@ -170,9 +170,6 @@ button:active {
 <button class=\"text-btn kill-btn\" onclick=\"if (confirm('Stop the Hunchentoot server?'))
     fetch('/kill');\">KIL</button>
 
-<button class=\"kill-btn text-btn\" onclick=\"if (confirm('Suspend the MediaMTX server?'))
-    fetch('/lenovo/suspend')\">SUS</button>
-
 <hr>
 <pre id=\"status\"></pre>
 <hr>
