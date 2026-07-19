@@ -113,19 +113,12 @@ button:active {
 <button class=\"text-btn menu-btn\" onclick=\"document.getElementById('video').muted=false\">UMT</button>
 <button class=\"text-btn\" onclick=\"fetch('/atv/pre')\">|\<</button>
 <button class=\"text-btn\" onclick=\"fetch('/atv/rwd')\">\<\<</button>
-
 <button class=\"text-btn\" onclick=\"fetch('/atv/play')\">\>||</button>
-<!--
-<button class=\"text-btn\" onclick=\"fetch('/atv/pause')\">||</button>
--->
 <button class=\"text-btn\" onclick=\"fetch('/atv/stop')\">[]</button>
-
 <button class=\"text-btn\" onclick=\"fetch('/atv/fwd')\">\>\></button>
 <button class=\"text-btn\" onclick=\"fetch('/atv/nxt')\">\>|</button>
-
 <button class=\"text-btn\" onclick=\"fetch('/atv/beg')\">-10S</button>
 <button class=\"text-btn\" onclick=\"fetch('/atv/end')\">+10S</button>
-
 
 <br>
 <button class=\"menu-btn nav-btn\" onclick=\"fetch('/atv/menu')\">MNU</button>
@@ -134,16 +127,11 @@ button:active {
 
 <button class=\"nav-btn blank\" disabled>x</button>
 
-
-
 <button class=\"text-btn start-btn\" onclick=\"fetch('/atv/turn_on')\">STA</button> 
-
 <button class=\"text-btn stop-btn\" onclick=\"fetch('/atv/turn_off')\">STP</Button>
-<button class=\"nav-btn\" onclick=\"
-fetch('/atv/status')
+<button class=\"nav-btn\" onclick=\"fetch('/atv/status')
   .then(r => r.text())
-  .then(t => document.getElementById('status').textContent = t);
-\">ATV</button>
+  .then(t => document.getElementById('status').textContent = t);\">ATV</button>
 
 <button class=\"nav-btn blank\" disabled>x</button>
 <button class=\"nav-btn status-btn\" onclick=\"refreshStream()\">RFR</button>
@@ -156,17 +144,12 @@ fetch('/atv/status')
 
 <button class=\"text-btn start-btn\" onclick=\"fetch('/ffmpeg/start')\">STA</button>
 <button class=\"text-btn stop-btn\" onclick=\"fetch('/ffmpeg/stop')\">STP</button>
-<button class=\"text-btn\"  onclick=\"
-fetch('/ffmpeg/status')
+<button class=\"text-btn\"  onclick=\"fetch('/ffmpeg/status')
   .then(r => r.text())
-  .then(t => document.getElementById('status').textContent = t);
-\">FMP</button>
+  .then(t => document.getElementById('status').textContent = t);\">FMP</button>
 
 <button class=\"nav-btn blank\" disabled>x</button>
-<button class=\"text-btn stop-btn\" onclick=\"location.href='/logout'\">
-OUT
-</button>
-
+<button class=\"text-btn stop-btn\" onclick=\"location.href='/logout'\">OUT</button>
 <br>
 
 <button class=\"ctr-btn nav-btn\" onclick=\"fetch('/atv/home/2')\">SWT</button>
@@ -177,21 +160,17 @@ OUT
 
 <button class=\"text-btn start-btn\" onclick=\"fetch('/mediamtx/start')\">STA</button>
 <button class=\"text-btn stop-btn\" onclick=\"fetch('/mediamtx/stop')\">STP</button>
-<button class=\"text-btn\" onclick=\"
-fetch('/mediamtx/status')
+<button class=\"text-btn\" onclick=\"fetch('/mediamtx/status')
   .then(r => r.text())
-  .then(t => document.getElementById('status').textContent = t);
-\">MTX</button>
+  .then(t => document.getElementById('status').textContent = t);\">MTX</button>
 
 
 <button class=\"blank nav-btn\" disabled>x</button>
 
-<button class=\"text-btn kill-btn\" onclick=\"
-if (confirm('Stop the Hunchentoot server?'))
+<button class=\"text-btn kill-btn\" onclick=\"if (confirm('Stop the Hunchentoot server?'))
     fetch('/kill');\">KIL</button>
 
-<button class=\"kill-btn text-btn\" onclick=\"
-if (confirm('Suspend the MediaMTX server?'))
+<button class=\"kill-btn text-btn\" onclick=\"if (confirm('Suspend the MediaMTX server?'))
     fetch('/lenovo/suspend')\">SUS</button>
 
 <hr>
