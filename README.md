@@ -1,6 +1,8 @@
-# ATV Web Gateway
+# ATV-WEB 
 
-A self-hosted Apple TV web gateway built with Common Lisp, ESP32 IR control, and MediaMTX streaming.
+# ATV-WEB
+
+A self-hosted web interface for controlling and viewing Apple TV, built with Common Lisp, ESP32-based IR control, and MediaMTX streaming.
 
 ![ATV-Web](images/screenshot.png)
 
