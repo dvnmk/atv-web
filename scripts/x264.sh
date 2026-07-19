@@ -22,10 +22,9 @@
   -bufsize 3600k \
   -pix_fmt yuv420p \
   -c:a aac \
-  -b:a 96k \
+  -b:a 128k \
   -af "aresample=async=1:first_pts=0" \
   -rtsp_transport tcp \
   -muxdelay 0 \
   -f rtsp \
   rtsp://127.0.0.1:8554/webcam
-  
