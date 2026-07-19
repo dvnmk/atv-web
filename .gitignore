@@ -3,3 +3,4 @@ atv-esp-remote/secrets.h
 *~
 .DS_Store
 *.tmp
+*.bak
