@@ -40,7 +40,7 @@
        autoplay
        muted
        playsinline
-       style='width:98vw'>
+       style='width:98vw; max-height:75vh'>
 </video>
 <br>
 
@@ -111,6 +111,7 @@ button:active {
 </style>
 
 <button class=\"text-btn menu-btn\" onclick=\"document.getElementById('video').muted=false\">UMT</button>
+<button class=\"text-btn menu-btn\" onclick=\"fullscreenVideo()\">FLS</button>
 <button class=\"text-btn\" onclick=\"fetch('/atv/pre')\">|\<</button>
 <button class=\"text-btn\" onclick=\"fetch('/atv/rwd')\">\<\<</button>
 <button class=\"text-btn\" onclick=\"fetch('/atv/play')\">\>||</button>
@@ -196,6 +197,16 @@ function loadStream() {
 
         video.src = url + '?t=' + Date.now();
         video.load();
+    }
+}
+
+function fullscreenVideo() {
+    const video = document.getElementById(\"video\");
+
+    if (video.requestFullscreen) {
+        video.requestFullscreen();
+    } else if (video.webkitRequestFullscreen) {
+        video.webkitRequestFullscreen(); // Safari
     }
 }
 
