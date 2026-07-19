@@ -1,7 +1,7 @@
 (in-package :atv-web)
 
 (setf hunchentoot:*session* t)
-(setf hunchentoot:*session-max-time* (* 60 60))
+(setf hunchentoot:*session-max-time* (* 2 60 60))
 
 (defun require-auth ()
   (unless (hunchentoot:session-value :auth)
