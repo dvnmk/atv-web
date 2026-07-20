@@ -8,6 +8,11 @@
     (hunchentoot:redirect "/")
     (hunchentoot:abort-request-handler)))
 
+(defun require-auth-api ()
+  (unless (hunchentoot:session-value :auth)
+    (setf (hunchentoot:return-code*) 401)
+    (return-from require-auth-api "UNAUTHORIZED")))
+
 (define-easy-handler (logout-handler :uri "/logout") ()
   (setf (hunchentoot:session-value :auth) nil)
   (hunchentoot:redirect "/"))
@@ -239,7 +244,8 @@ button:active {
   (let ((pw (hunchentoot:parameter "mw")))
     ;; login attempt
     (when (and pw (string= pw (today-magic-word)))
-      (setf (hunchentoot:session-value :auth) t))
+      (setf (hunchentoot:session-value :auth) t)
+      (hunchentoot:redirect "/"))
     ;; already authenticated
     (if (hunchentoot:session-value :auth)
 	(format nil
@@ -309,14 +315,14 @@ button:active {
    (format nil "~a/~a" *atv-ir-host* cmd)))
 
 (define-easy-handler (atv-power_state-handler :uri "/atv/power_state") ()
-  (require-auth)
-  (atv-command "power_state"))
+  (or (require-auth-api)
+  (atv-command "power_state")))
 (define-easy-handler (atv-turn_on-handler :uri "/atv/turn_on") ()
-  (require-auth)
-  (atv-command "turn_on"))
+ (or  (require-auth-api)
+  (atv-command "turn_on")))
 (define-easy-handler (atv-off-handler :uri "/atv/turn_off") ()
-  (require-auth)
-  (atv-command "turn_off"))
+(or  (require-auth-api)
+  (atv-command "turn_off")))
 (define-easy-handler (atv-down-handler :uri "/atv/down") ()
   (require-auth)
   (atv-ir "down"))
@@ -378,9 +384,8 @@ button:active {
   (require-auth)
   (atv-ir "end"))
 
-(define-easy-handler (atv-status :uri "/atv/status") ()
-  (require-auth)
-  (handler-case
+(defun get-atv-status ()
+    (handler-case
       (multiple-value-bind (body status headers)
           (dex:get (format nil "~A/status" *atv-ir-host*))
         (declare (ignore headers))
@@ -388,6 +393,10 @@ button:active {
     (error (e)
       (setf (hunchentoot:return-code*) 503)
       (format nil "ATV IR ERROR: ~A" e))))
+
+(define-easy-handler (atv-status :uri "/atv/status") ()
+  (or (require-auth-api)
+      (get-atv-status)))
 
 ;; lenovo control
 (defparameter *lenovo-user* "gnsk")
@@ -406,34 +415,34 @@ button:active {
    :ignore-error-status t))
 
 (hunchentoot:define-easy-handler (madiamtx-start-handler :uri "/mediamtx/start") ()
-  (require-auth)
-  (lenovo-systemctl "start" "mediamtx.service")
-  "Mediamtx started")
+  (or  (require-auth-api)
+       (lenovo-systemctl "start" "mediamtx.service")
+       "Mediamtx started"))
 
 (hunchentoot:define-easy-handler (mediamtx-stop-handler :uri "/mediamtx/stop") ()
-  (require-auth)
-  (lenovo-systemctl "stop" "mediamtx.service")
-  "Mediamtx stopped")
+  (or (require-auth-api)
+      (lenovo-systemctl "stop" "mediamtx.service")
+      "Mediamtx stopped"))
 
 (define-easy-handler (mediamtx-status-handler :uri "/mediamtx/status") ()
-  (require-auth)
-  (setf (hunchentoot:content-type*) "text/plain; charset=utf-8")
-  (lenovo-systemctl "status" "mediamtx.service"))
+  (or (require-auth-api)
+;      (setf (hunchentoot:content-type*) "text/plain; charset=utf-8")
+      (lenovo-systemctl "status" "mediamtx.service")))
 
 (hunchentoot:define-easy-handler (stream-on-handler :uri "/ffmpeg/start") ()
-  (require-auth)
-  (lenovo-systemctl "start" "ffmpeg-x264.service")
-  "FFmpeg-x264 started")
+  (or (require-auth-api)
+      (lenovo-systemctl "start" "ffmpeg-x264.service")
+      "FFmpeg-x264 started"))
 
 (hunchentoot:define-easy-handler (stream-off-handler :uri "/ffmpeg/stop") ()
-  (require-auth)
-  (lenovo-systemctl "stop" "ffmpeg-x264.service")
-  "FFmpeg-x264 stopped")
+  (or  (require-auth-api)
+       (lenovo-systemctl "stop" "ffmpeg-x264.service")
+       "FFmpeg-x264 stopped"))
 
 (define-easy-handler (ffmpeg-status-handler :uri "/ffmpeg/status") ()
-  (require-auth)
-  (setf (hunchentoot:content-type*) "text/plain; charset=utf-8")
-  (lenovo-systemctl "status" "ffmpeg-x264.service"))
+  (or (require-auth-api)
+;      (setf (hunchentoot:content-type*) "text/plain; charset=utf-8")
+      (lenovo-systemctl "status" "ffmpeg-x264.service")))
 
 (defun lenovo-suspend ()
   (uiop:run-program
