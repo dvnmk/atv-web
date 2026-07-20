@@ -8,6 +8,7 @@
                )
   :components
   ((:file "package")
+   (:file "config")
    (:file "magic-word")
    (:file "atv-web")
    )

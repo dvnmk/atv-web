@@ -18,10 +18,11 @@
   (hunchentoot:redirect "/"))
 
 (defun video-scripts-html ()
+  (format nil 
 "
 <script>
 const video = document.getElementById('video');
-const url = 'http://gnsk.iptime.org:8888/webcam/index.m3u8';
+const url = '~A';
 
 let hls = null;
 
@@ -60,7 +61,8 @@ function refreshStream() {
     loadStream();
 }
 </script>
-")
+"
+*stream-url*))
 
 (defun control-buttons-html ()
   "
@@ -299,7 +301,6 @@ button:active {
 		(video-scripts-html))
 	(login-html))))
 
-(defparameter *atv-id* "56:DE:61:E6:C5:17")
 
 (defun atv-command (cmd)
   (uiop:run-program
@@ -307,8 +308,6 @@ button:active {
          "--id" *atv-id*
          cmd)
    :output :string))
-
-(defparameter *atv-ir-host* "http://192.168.0.128")
 
 (defun atv-ir (cmd)
   (dex:get
@@ -399,8 +398,6 @@ button:active {
       (get-atv-status)))
 
 ;; lenovo control
-(defparameter *lenovo-user* "gnsk")
-(defparameter *lenovo-host* "192.168.0.22")
 
 (defun lenovo-systemctl (action service)
   (uiop:run-program
