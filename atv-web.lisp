@@ -276,7 +276,7 @@ button:active {
 (define-easy-handler (remote :uri "/remote") ()
   (let ((pw (hunchentoot:parameter "mw")))
     ;; login attempt
-    (when (and pw (string= pw (today-magic-word)))
+    (when (and pw (string= pw (magic-word)))
       (setf (hunchentoot:session-value :auth) t))
     ;; already authenticated
     (if (hunchentoot:session-value :auth)
