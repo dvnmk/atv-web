@@ -118,13 +118,13 @@ HLS
    |
 Web Browser
 ```
-
+<!--
 ## Security
 
 This project is designed for personal home use.
 
 The streaming and control interfaces should not be exposed directly to the public internet without proper authentication and HTTPS.
-
+-->
 ## License
 
 MIT License
