@@ -14,7 +14,7 @@ A self-hosted web interface for controlling and viewing Apple TV, built with Com
 * Web control of Apple TV through an ESP32 IR transmitter
 * Live Apple TV video streaming through MediaMTX
 * A lightweight Common Lisp (Hunchentoot) web interface
-* Remote access from browsers on the local network
+* Remote access from browsers 
 
 The system separates control and video streaming:
 
