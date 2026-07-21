@@ -91,10 +91,15 @@ atv-web/
 ├── atv-web.lisp
 ├── atv-web.asd
 ├── package.lisp
+├── config.example.lisp
 ├── magic-word.example.lisp
 ├── atv-esp-remote/
 │   ├── atv-esp-remote.ino
 │   └── secrets.example.h
+├── scripts/
+│   ├── mediamtx.yml
+│   ├── mm.sh
+│   └── x264.sh
 └── README.md
 ```
 
