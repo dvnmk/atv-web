@@ -5,7 +5,11 @@ A self-hosted web interface for controlling and viewing Apple TV, built with Com
 ![ATV-Web](images/screenshot.png)
 
 ## Why?
-* Why?
+I wanted to watch and control my Apple TV from Tesla's built-in browser using
+only Tesla Premium Connectivity.
+
+ATV-WEB streams the Apple TV as HLS and provides a web-based remote control,
+making the Apple TV accessible from anywhere with a browser.
 
 ## Overview
 
