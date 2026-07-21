@@ -5,5 +5,5 @@
 ;; This file is only an example.
 
 (defun magic-word ()
-  "Return today's access code."
-  "00000")
+  "Return access code."
+  "0000")
