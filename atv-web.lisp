@@ -245,7 +245,7 @@ button:active {
 (define-easy-handler (index :uri "/") ()
   (let ((pw (hunchentoot:parameter "mw")))
     ;; login attempt
-    (when (and pw (string= pw (today-magic-word)))
+    (when (and pw (string= pw (magic-word)))
       (setf (hunchentoot:session-value :auth) t)
       (hunchentoot:redirect "/"))
     ;; already authenticated
