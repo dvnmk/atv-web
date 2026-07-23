@@ -148,14 +148,47 @@ function refreshStream() {
 <head>
 <meta charset='utf-8'>
 <title>ATV-WEB</title>
+
+<style>
+body {
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #ffffd8;
+}
+
+form {
+    display: flex;
+    gap: 10px;
+}
+input[type=password] {
+    width: 300px;
+    font-size: 32px;
+    padding: 16px;
+
+    background: #ffffc5; 
+    color: #000000;     
+    border: 2px solid #666;
+    border-radius: 8px;
+}
+
+input[type=submit] {
+    font-size: 24px;
+    padding: 12px 20px;
+}
+</style>
 </head>
 
 <body>
-<form>
-<input type='password' name='mw'>
-<input type='submit' value='Enter'>
+<form method='post'>
+    <input type='password' name='mw' autofocus>
+    <input type='submit' value='Enter'>
 </form>
+
 </body>
+</html>
 ")
 
 (defun style-html ()
