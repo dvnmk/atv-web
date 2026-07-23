@@ -273,6 +273,7 @@ button:active {
 		(video-scripts-html))
 	(login-html))))
 
+          
 (define-easy-handler (remote :uri "/remote") ()
   (let ((pw (hunchentoot:parameter "mw")))
     ;; login attempt

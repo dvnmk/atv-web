@@ -14,7 +14,7 @@
 
 (defparameter *stream-url*
   (format nil
-          "const url = 'http://~A:~A~A';"
+          "http://~A:~A~A;"
           *stream-host*
           *stream-port*
           *stream-path*))
