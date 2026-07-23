@@ -152,11 +152,11 @@ function refreshStream() {
 <style>
 body {
     margin: 0;
-    height: 100vh;
+    height: 75vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    background: #ffffd8;
+    background: #ffffc5;
 }
 
 form {
@@ -168,7 +168,7 @@ input[type=password] {
     font-size: 32px;
     padding: 16px;
 
-    background: #ffffc5; 
+    background: #ffffd8; 
     color: #000000;     
     border: 2px solid #666;
     border-radius: 8px;
@@ -184,7 +184,7 @@ input[type=submit] {
 <body>
 <form method='post'>
     <input type='password' name='mw' autofocus>
-    <input type='submit' value='Enter'>
+    <input type='submit' value='LOS'>
 </form>
 
 </body>
