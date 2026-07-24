@@ -159,6 +159,19 @@ body {
     background: #ffffc5;
 }
 
+.login-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#clock {
+    margin-bottom: 30px;
+    font-size: 34px;
+    font-family: monospace;
+    color: #444;
+}
+
 form {
     display: flex;
     gap: 10px;
@@ -182,10 +195,42 @@ input[type=submit] {
 </head>
 
 <body>
-<form method='post'>
-    <input type='password' name='mw' autofocus>
-    <input type='submit' value='LOS'>
-</form>
+
+<div class='login-box'>
+    <div id='clock'></div>
+
+    <form method='post'>
+        <input type='password' name='mw' autofocus>
+        <input type='submit' value='LOS'>
+    </form>
+</div>
+
+
+<script>
+function updateClock() {
+    const now = new Date();
+
+
+const date = [
+    String(now.getMonth() + 1).padStart(2, '0'),
+    String(now.getDate()).padStart(2, '0'),
+    now.getFullYear()
+].join('-');
+
+  const time = now.toLocaleTimeString('en-GB', {
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false
+    });
+    document.getElementById('clock').innerHTML =
+        date + ' ' + time;
+}
+
+updateClock();
+setInterval(updateClock, 1000);
+
+</script>
 
 </body>
 </html>
